@@ -2,6 +2,8 @@ import asyncio
 import discord
 import random
 import string
+import os
+import datetime
 
 from discord import Embed, Color
 from discord.ext import commands
@@ -36,13 +38,18 @@ class Handles(commands.Cog):
         self.db = dbconn.DbConn()
         self.cf = cf_api.CodeforcesAPI()
 
+    @commands.Cog.listener()
+    async def on_ready(self):
+        #await ctx.channel.send("Handles cog is ready")
+        print("cogs handles is ready")
+
     def make_handle_embed(self, ctx):
         desc = "Information about Handle related commands! **[use .handle <command>]**\n\n"
         handle = self.client.get_command('handle')
         for cmd in handle.commands:
             desc += f"`{cmd.name}`: **{cmd.brief}**\n"
         embed = discord.Embed(description=desc, color=discord.Color.dark_magenta())
-        embed.set_author(name="Lockout commands help", icon_url=ctx.me.avatar_url)
+        embed.set_author(name="Lockout commands help", icon_url=ctx.me.avatar)
         embed.set_footer(
             text="Use the prefix . before each command. For detailed usage about a particular command, type .help <command>")
         embed.add_field(name="GitHub repository", value=f"[GitHub]({GITHUB_LINK})",
@@ -56,6 +63,10 @@ class Handles(commands.Cog):
 
     @commands.group(brief='Commands related to handles! Type .handle for more details', invoke_without_command=True)
     async def handle(self, ctx):
+        print("helloo  from handlee")
+        await ctx.channel.send("message from commands group handle")
+        logging_channel = await self.client.fetch_channel(os.environ.get("LOGGING_CHANNEL"))
+        await logging_channel.send("Hello from handlee")
         await ctx.send(embed=self.make_handle_embed(ctx))
 
     @handle.command(brief="Set someone's handle (Admin/Mod/Lockout Manager only)")
@@ -119,6 +130,10 @@ class Handles(commands.Cog):
     @handle.command(brief="Set your Codeforces handle")
     @cooldown(1, HANDLE_IDENTIFY_WAIT_TIME, BucketType.user)
     async def identify(self, ctx, handle: str):
+        print("hello theeere, from handle identify")
+        await ctx.channel.send("emmm it works!!! from handle identify")
+        logging_channel = await self.client.fetch_channel(os.environ.get("LOGGING_CHANNEL"))
+        await logging_channel.send("Hello from handlee identifyy")
         if self.db.get_handle(ctx.guild.id, ctx.author.id):
             await discord_.send_message(ctx, f"Your handle is already set to {self.db.get_handle(ctx.guild.id, ctx.author.id)}, "
                                     f"ask an admin or mod to remove it first and try again.")
@@ -221,5 +236,5 @@ class Handles(commands.Cog):
         await paginator.Paginator(data, ["User", "Handle", "Rating"], f"Handle List", HANDLES_PER_PAGE).paginate(ctx, self.client)
 
 
-def setup(client):
-    client.add_cog(Handles(client))
+async def setup(client):
+    await client.add_cog(Handles(client))
