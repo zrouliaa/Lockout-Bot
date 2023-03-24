@@ -79,6 +79,11 @@ class Matches(commands.Cog):
         self.db = dbconn.DbConn()
         self.cf = cf_api.CodeforcesAPI()
 
+    @commands.Cog.listener()
+    async def on_ready(self):
+        #await ctx.channel.send("Handles cog is ready")
+        print("cogs matches is ready")
+
     def make_match_embed(self, ctx):
         desc = "Information about Matches related commands! **[use .match <command>]**\n\n"
         match = self.client.get_command('match')
@@ -86,7 +91,7 @@ class Matches(commands.Cog):
         for cmd in match.commands:
             desc += f"`{cmd.name}`: **{cmd.brief}**\n"
         embed = discord.Embed(description=desc, color=discord.Color.dark_magenta())
-        embed.set_author(name="Lockout commands help", icon_url=ctx.me.avatar_url)
+        embed.set_author(name="Lockout commands help", icon_url=ctx.me.avatar)
         embed.set_footer(
             text="Use the prefix . before each command. For detailed usage about a particular command, type .help match <command>")
         embed.add_field(name="GitHub repository", value=f"[GitHub]({GITHUB_LINK})",
@@ -515,5 +520,5 @@ class Matches(commands.Cog):
         await paginator.Paginator(data, ["User", "Rating"], f"Match Ratings", 10).paginate(ctx, self.client)
 
 
-def setup(client):
-    client.add_cog(Matches(client))
+async def setup(client):
+    await client.add_cog(Matches(client))
