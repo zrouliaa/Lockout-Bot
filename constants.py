@@ -5,7 +5,7 @@ BOT_INVITE = ""
 GITHUB_LINK = ""
 
 ADMIN_PRIVILEGE_ROLES = ['Admin', 'Moderator', 'Lockout Manager']
-OWNERS = [195237189582323712]
+OWNERS = []
 
 BACKUP_DIR = "./data/backup/"
 
